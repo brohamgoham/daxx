@@ -2,8 +2,9 @@ use tokio;
 
 mod api;
 mod modelz;
+use crate::api::eth;
 
-fn main() {
-    println!("Hello, world!");
+#[tokio::main]
+async fn main() {
+    api::eth::get_block_number_and_pending_txn();
 }
-

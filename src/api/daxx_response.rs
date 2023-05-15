@@ -31,3 +31,13 @@ impl DaxxErrorResponse {
         DaxxErrorResponse { status, msg}
     }
 }
+
+impl IntoResponse for DaxxErrorResponse {
+    fn into_response(self) -> Response {
+        (
+            StatusCode::from_u16(self.status).unwrap_or(StatusCode::INTERNAL_SERVER_ERROR),
+            Json(self),
+        )
+            .into_response()
+    }
+}
