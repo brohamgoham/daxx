@@ -3,12 +3,17 @@ use ethers::prelude::*;
 use ethers::types::U256;
 use reqwest::Client;
 
+
 pub async fn get_block_number_and_pending_txn() -> String {
+    let alchemey_api_key = std::env::var("ALCHEMY_API_KEY").expect("ALCHEMY_API_KEY not set");
+    let url = format!(
+        "https://eth-mainnet.alchemyapi.io/v2/{}",
+        alchemey_api_key
+    );
     // Initialize the Ethereum provider
     let provider: Provider<Http> =
-        Provider::connect("https://eth-mainnet.g.alchemy.com/v2/o_bo9q2LMtGvYqr7jsyYSpUrE_azdh9x")
+        Provider::connect(&url)
             .await;
-
     // Get all transactions for the specified address
     let block_number = provider.get_block_number().await.unwrap();
 

@@ -2,10 +2,16 @@ use ethers::prelude::*;
 use std::convert::Infallible;
 
 pub async fn get_txns_handler() -> Result<String, Infallible> {
+    let alchemey_api_key = std::env::var("ALCHEMEY_API_KEY").expect("ALCHEMEY_API_KEY not set");
+    let url = format!(
+        "https://eth-mainnet.alchemyapi.io/v2/{}",
+        alchemey_api_key
+    );
     // Initialize the Ethereum provider
     let provider: Provider<Http> =
-        Provider::connect("https://eth-mainnet.g.alchemy.com/v2/o_bo9q2LMtGvYqr7jsyYSpUrE_azdh9x")
+        Provider::connect(&url)
             .await;
+
 
     // Get Block number
     let block_number = provider.get_block_number().await.unwrap();
