@@ -1,5 +1,7 @@
 use ethers::prelude::*;
 use std::convert::Infallible;
+use ethers::types::H256;
+use std::str::FromStr;
 
 pub async fn get_txns_handler() -> Result<String, Infallible> {
     let alchemey_api_key = std::env::var("ALCHEMEY_API_KEY").expect("ALCHEMEY_API_KEY not set");
@@ -56,6 +58,90 @@ pub async fn get_txns_handler() -> Result<String, Infallible> {
     Ok(response_body)
 }
 
+pub async fn get_receipts(txn_hash: DaxxTxnHash) -> Result<String, Infallible> {
+    let alchemey_api_key = std::env::var("ALCHEMEY_API_KEY").expect("ALCHEMEY_API_KEY not set");
+    let url = format!(
+        "https://eth-mainnet.alchemyapi.io/v2/{}",
+        alchemey_api_key
+    );
+    // Initialize the Ethereum provider
+    let provider: Provider<Http> =
+        Provider::connect(&url)
+            .await;
+
+    let txn_receipt = provider
+            .get_transaction_receipt(txn_hash)
+            .await
+            .unwrap();
+
+    let mut response_body = String::new();
+
+    if let Some(receipt) = txn_receipt {
+        // Access the block value and its transactions
+        let block_number = receipt.block_number;
+        let transaction_hash = receipt.transaction_hash;
+        let transaction_index = receipt.transaction_index;
+        let from = receipt.from;
+        let to = receipt.to;
+        let cumulative_gas_used = receipt.cumulative_gas_used;
+        let gas_used = receipt.gas_used;
+        let contract_address = receipt.contract_address;
+        let logs = receipt.logs;
+        let logs_bloom = receipt.logs_bloom;
+        let status = receipt.status;
+
+        let receipt_info = format!(
+            "Block number: {:#?}\nTransaction hash: {:#?}\nTransaction index: {:#?}\nFrom: {:#?}\nTo: {:#?}\nCumulative gas used: {:#?}\nGas used: {:#?}\nContract address: {:#?}\nLogs: {:#?}\nLogs bloom: {:#?}\nStatus: {:#?}\n",
+            block_number, transaction_hash, transaction_index, from, to, cumulative_gas_used, gas_used, contract_address, logs, logs_bloom, status
+        );
+
+        response_body.push_str(&receipt_info);
+    } else {
+        response_body = "No pending transactions found.".to_string();
+    }
+
+    Ok(response_body)
+
+
+}
+
+pub struct DaxxTxnHash {
+    txn_hash: TxHash,
+}
+
+impl DaxxTxnHash {
+    pub fn new(txn_hash: TxHash) -> Self {
+        Self { txn_hash }
+    }
+
+}
+
+impl From<DaxxTxnHash> for H256 {
+    fn from(daxx_txn_hash: DaxxTxnHash) -> Self {
+        H256::from_slice(&daxx_txn_hash.txn_hash.0)
+    }
+}
+//convert daxx txn hash to eth txn hash
+impl From<DaxxTxnHash> for String {
+    fn from(daxx_txn_hash: DaxxTxnHash) -> Self {
+        format!("{:#?}", daxx_txn_hash.txn_hash)
+    }
+}
+
+impl FromStr for DaxxTxnHash {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let txn_hash = s
+            .strip_prefix("0x")
+            .ok_or(())?
+            .parse::<TxHash>()
+            .map_err(|_| ())?;
+
+        Ok(Self::new(txn_hash))
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -68,5 +154,15 @@ mod test {
         let result2 = get_txns_handler().await;
 
         dbg!("Result2: {:#?}", &result2);
+    }
+
+    #[tokio::test]
+    async fn test_get_tx_receipt() {
+        let txn_hash = "0x390be29230671dcc9628689761da0e7bf710fe883e5c29d83f00e092a6cd24d6"
+            .parse::<TxHash>()
+            .expect("failed to parse txn hash");
+        let daxx_txn_hash = DaxxTxnHash::new(txn_hash);
+        let res = get_receipts(daxx_txn_hash.into()).await;
+        dbg!("Result: {:#?}", &res);
     }
 }
