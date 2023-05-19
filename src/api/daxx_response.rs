@@ -1,3 +1,11 @@
+//! Daxx API response types
+//!
+//! This module contains the response types for Daxx API calls
+//! and the implementation of the `IntoResponse` trait for them.
+// allow dead code
+
+
+#[allow(dead_code)]
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
@@ -20,13 +28,13 @@ impl<T: Serialize> DaxxSuccessResponse<T>
 where
     T: Serialize,
 {
-    pub(crate) fn send(data: T) -> Self {
+    pub(crate) fn _send(data: T) -> Self {
         DaxxSuccessResponse { data }
     }
 }
 
 impl DaxxErrorResponse {
-    pub(crate) fn send(status: u16, msg: Option<String>) -> Self {
+    pub(crate) fn _send(status: u16, msg: Option<String>) -> Self {
         DaxxErrorResponse { status, msg }
     }
 }
