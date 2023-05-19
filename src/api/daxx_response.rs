@@ -2,10 +2,9 @@
 //!
 //! This module contains the response types for Daxx API calls
 //! and the implementation of the `IntoResponse` trait for them.
-// allow dead code
 
 
-#[allow(dead_code)]
+#![allow(dead_code)]
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
