@@ -3,9 +3,10 @@ use std::convert::Infallible;
 use axum::extract::Path;
 use axum::{routing::get, Router};
 use tokio;
+
 mod api;
 mod modelz;
-use crate::api::eth;
+
 use crate::api::route::*;
 
 #[tokio::main]
