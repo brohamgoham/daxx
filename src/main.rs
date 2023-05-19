@@ -1,5 +1,6 @@
 use std::convert::Infallible;
 
+use axum::extract::Path;
 use axum::{routing::get, Router};
 use tokio;
 mod api;
@@ -25,7 +26,10 @@ async fn txns_handler() -> Result<String, Infallible> {
     Ok(tx)
 }
 
-async fn receipt_handler(tx: DaxxTxnHash) -> Result<String, Infallible> {
+async fn receipt_handler(Path(txn_hash): Path<String>) -> Result<String, Infallible> {
+    let tx = txn_hash
+        .parse::<DaxxTxnHash>()
+        .expect("failed to parse txn hash");
     let tx = get_receipts(tx).await.unwrap();
     Ok(tx)
 }
