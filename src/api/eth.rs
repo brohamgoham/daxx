@@ -4,8 +4,7 @@ use ethers::prelude::*;
 pub async fn _get_block_number_and_pending_txn() -> String {
     let alchemey_api_key = std::env::var("ALCHEMEY_API_KEY").expect("ALCHEMY_API_KEY not set");
     let url = format!(
-        "https://eth-mainnet.alchemyapi.io/v2/{}",
-        alchemey_api_key
+        "https://eth-mainnet.alchemyapi.io/v2/{alchemey_api_key}"
     );
     // Initialize the Ethereum provider
     let provider: Provider<Http> =
@@ -33,11 +32,11 @@ pub async fn _get_block_number_and_pending_txn() -> String {
         }
 
         // Use the block number and transactions as needed
-        println!("Block number: {:#?}", block_number);
+        println!("Block number: {block_number:#?}");
     } else {
         println!("No pending transactions found.");
     }
-    format!("Block number: {}", block_number)
+    format!("Block number: {block_number}")
 }
 
 #[cfg(test)]

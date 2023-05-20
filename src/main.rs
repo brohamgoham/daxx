@@ -6,7 +6,7 @@ use axum::{routing::get, Router};
 mod api;
 mod modelz;
 
-use crate::api::route::*;
+use crate::api::route::{DaxxTxnHash, get_receipts, get_txns_handler};
 
 extern crate pretty_env_logger;
 #[macro_use] extern crate log;
@@ -20,7 +20,7 @@ async fn main() {
         .route("/v1/txns", get(txns_handler))
         .route("/v1/txns/:txn_hash", get(receipt_handler));
 
-    axum::Server::bind(&"127.0.0.1:8494".parse().unwrap())
+    axum::Server::bind(&"[::]:8494".parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();

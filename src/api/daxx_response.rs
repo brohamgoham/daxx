@@ -28,13 +28,13 @@ where
     T: Serialize,
 {
     pub(crate) fn _send(data: T) -> Self {
-        DaxxSuccessResponse { data }
+        Self { data }
     }
 }
 
 impl DaxxErrorResponse {
     pub(crate) fn _send(status: u16, msg: Option<String>) -> Self {
-        DaxxErrorResponse { status, msg }
+        Self { msg, status }
     }
 }
 

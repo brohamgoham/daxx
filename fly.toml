@@ -1,13 +1,13 @@
-# fly.toml app configuration file generated for daxx on 2023-05-19T10:39:23-04:00
+# fly.toml app configuration file generated for daxx on 2023-05-20T15:41:50-04:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
 app = "daxx"
-primary_region = "atl"
+primary_region = "ewr"
 
 [http_service]
-  internal_port = 8494
+  internal_port = 8080
   force_https = true
   auto_stop_machines = true
   auto_start_machines = true
