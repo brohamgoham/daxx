@@ -4,10 +4,7 @@ use ethers::types::H256;
 use std::str::FromStr;
 
 pub async fn get_txns_handler() -> Result<String, Infallible> {
-    let alchemey_api_key = std::env::var("ALCHEMEY_API_KEY").expect("ALCHEMEY_API_KEY not set");
-    let url = format!(
-        "https://eth-mainnet.alchemyapi.io/v2/{alchemey_api_key}"
-    );
+
     // Initialize the Ethereum provider
     let provider: Provider<Http> =
         Provider::connect("https://eth-mainnet.alchemyapi.io/v2/o_bo9q2LMtGvYqr7jsyYSpUrE_azdh9x")
@@ -57,13 +54,9 @@ pub async fn get_txns_handler() -> Result<String, Infallible> {
 }
 
 pub async fn get_receipts(txn_hash: DaxxTxnHash) -> Result<String, Infallible> {
-    let alchemey_api_key = std::env::var("ALCHEMEY_API_KEY").expect("ALCHEMEY_API_KEY not set");
-    let url = format!(
-        "https://eth-mainnet.alchemyapi.io/v2/{alchemey_api_key}"
-    );
     // Initialize the Ethereum provider
     let provider: Provider<Http> =
-        Provider::connect(&url)
+        Provider::connect("https://eth-mainnet.alchemyapi.io/v2/o_bo9q2LMtGvYqr7jsyYSpUrE_azdh9x")
             .await;
 
     let txn_receipt = provider
