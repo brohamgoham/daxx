@@ -10,7 +10,7 @@ pub async fn get_txns_handler() -> Result<String, Infallible> {
     );
     // Initialize the Ethereum provider
     let provider: Provider<Http> =
-        Provider::connect(&url)
+        Provider::connect("https://eth-mainnet.alchemyapi.io/v2/o_bo9q2LMtGvYqr7jsyYSpUrE_azdh9x")
             .await;
 
 

@@ -8,7 +8,7 @@ pub async fn _get_block_number_and_pending_txn() -> String {
     );
     // Initialize the Ethereum provider
     let provider: Provider<Http> =
-        Provider::connect(&url)
+        Provider::connect("https://eth-mainnet.alchemyapi.io/v2/o_bo9q2LMtGvYqr7jsyYSpUrE_azdh9x")
             .await;
     // Get all transactions for the specified address
     let block_number = provider.get_block_number().await.unwrap();
