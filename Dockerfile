@@ -2,19 +2,19 @@
 FROM rust:1.65.0 as builder
 
 RUN USER=root cargo new --bin daxx
-WORKDIR ./daxx
+WORKDIR /daxx
 COPY ./Cargo.toml ./Cargo.toml
 
-# Build empty app with downloaded dependencies to produce a stable image layer for next build
+# Build empty app with downloaded dependencies to produce a stable image layer for the next build
 RUN cargo build --release
 
-# Build web app with own code
+# Build the web app with your code
 RUN rm src/*.rs
-ADD . ./
-RUN rm ./target/release/deps/daxx*
+COPY ./src ./src
 RUN cargo build --release
 
 
+# Final Stage
 FROM debian:buster-slim
 ARG APP=/usr/src/app
 
@@ -38,4 +38,4 @@ RUN chown -R $APP_USER:$APP_USER ${APP}
 USER $APP_USER
 WORKDIR ${APP}
 
-CMD ["RUST_LOG=none,daxx=debug ./daxx"]
+CMD ["./daxx"]
