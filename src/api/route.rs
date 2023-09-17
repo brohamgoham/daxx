@@ -2,6 +2,7 @@ use ethers::prelude::*;
 use std::convert::Infallible;
 use ethers::types::H256;
 use std::str::FromStr;
+use crate::modelz::model::*;
 
 pub async fn get_txns_handler() -> Result<String, Infallible> {
 
@@ -15,43 +16,52 @@ pub async fn get_txns_handler() -> Result<String, Infallible> {
     let block_number = provider.get_block_number().await.unwrap();
 
     let pending_txn = provider
-    .get_block_with_txs(block_number)
-    .await
-    .unwrap();
+        .get_block_with_txs(block_number)
+        .await
+        .unwrap();
 
-    let mut response_body = String::new();
+        let mut transaction_data = Vec::new();
 
-    if let Some(block) = pending_txn {
-        // Access the block value and its transactions
-        let block_number = block.number;
-        let transactions = block.transactions;
-
-        // Process the transactions or access their properties
-        for transaction in transactions {
-            // Access transaction properties (e.g., transaction.hash, transaction.from, transaction.to)
-            let transaction_hash = format!("Transaction hash 💫 : {:#?}", transaction.hash);
-            let transaction_value = format!("Transaction value💰 : {:#?}", transaction.value);
-            let transaction_type =
-                format!("Transaction Type 🚨: {:#?}", transaction.transaction_type);
-            let gas = format!("Gas⛽️: {:#?}", transaction.gas);
-            let from = format!("From 😈: {:#?}", transaction.from);
-            let to = format!("To 🌙: {:#?}", transaction.to);
-
-            let transaction_info = format!(
-                "{transaction_hash}\n{transaction_value}\n{transaction_type}\n{gas}\n{from}\n{to}\n",
-            );
-
-            response_body.push_str(&transaction_info);
+        if let Some(block) = pending_txn {
+            // Access the block value and its transactions
+            let block_number = block.number;
+            let transactions = block.transactions;
+    
+            // Process the transactions or access their properties
+            for transaction in transactions {
+                // Access transaction properties (e.g., transaction.hash, transaction.from, transaction.to)
+                let transaction_hash = format!("{:#?}", transaction.hash);
+                let transaction_value = format!("{:#?}", transaction.value);
+                let transaction_type = transaction.transaction_type;
+                let gas = transaction.gas.as_u64();
+                let from = format!("{:#?}", transaction.from);
+                let to = transaction.to.map(|to| format!("{:#?}", to));
+                let data = TransactionData {
+                    block_number: transaction.block_number,
+                    from,
+                    to,
+                    transaction_hash,
+                    transaction_value,
+                    transaction_type,
+                    gas,
+                //    input: transaction.input,
+                    r:  transaction.r,
+                    s:  transaction.s,
+                    v:  transaction.v,
+                    chain_id: transaction.chain_id
+                };
+    
+                transaction_data.push(data);
+            }
+    
+            // Serialize the transaction data to JSON
+            let response_body = serde_json::to_string(&transaction_data).unwrap();
+    
+            Ok(response_body)
+        } else {
+            Ok("No pending transactions found.".to_string())
         }
-
-        // Use the block number and transactions as needed
-        response_body.push_str(&format!("Block number: {block_number:#?}"));
-    } else {
-        response_body = "No pending transactions found.".to_string();
     }
-
-    Ok(response_body)
-}
 
 pub async fn get_receipts(txn_hash: DaxxTxnHash) -> Result<String, Infallible> {
     // Initialize the Ethereum provider

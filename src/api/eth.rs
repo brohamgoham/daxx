@@ -20,7 +20,7 @@ pub async fn _get_block_number_and_pending_txn() -> String {
         // Process the transactions or access their properties
         for transaction in transactions {
             // Access transaction properties (e.g., transaction.hash, transaction.from, transaction.to)
-            println!("Transaction hash 💫 : {:#?}", transaction.hash);
+            println!("Transaction hash? 💫 : {}", transaction.hash);
             println!("Transaction value💰 : {:#?}", transaction.value);
             println!("Transaction Type 🚨: {:#?}", transaction.transaction_type);
             println!("Gas⛽️: {:#?}", transaction.gas);
